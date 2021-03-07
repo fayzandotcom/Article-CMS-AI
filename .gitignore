@@ -1,0 +1,11 @@
+__pycache__
+example_images
+flask_session
+FlaskWebProject/__pycache__
+FlaskWebProject/article-cms-db.db
+myenv
+sql_scripts
+tests
+LICENSE
+notes.txt
+WRITEUP.md

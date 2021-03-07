@@ -1,0 +1,82 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h1>{{ title }}</h1>
+<form action="" method="post" novalidate enctype="multipart/form-data">
+    {{ form.hidden_tag() }}
+    <div class="row">
+        <div class="col-sm-4">
+            <p>
+                {{ form.name.label }}<br>
+                {{ form.name(size=64) }}
+                {% for error in form.name.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.age.label }}<br>
+                {{ form.age(size=32) }}
+                {% for error in form.age.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>
+                {{ form.gender.label }}<br>
+                {{ form.gender(size=32) }}
+                {% for error in form.gender.errors %}
+                <span style="color: red;">[{{ error }}]</span>
+                {% endfor %}
+            </p>
+            <p>{{ form.submit() }}</p>
+        </div>
+        <div class="col-sm-4">
+            {% if form.image_path.data %}
+            <p><img id="image_display" src="{{ imageSource + form.image_path.data }}" width="300" height="250" /></p>
+            {% else %}
+            <p><img id="image_display" width="300" height="250" /></p>
+            {% endif %}
+            <p>
+                {{ form.image_path.label }}<br>
+                {{ form.image_path }}
+                {% for error in form.image_path.errors %}
+                <span style="color: red;">{{ error.join(form.image_path.errors) }}</span>
+                {% endfor %}
+            </p>
+            <p><input type="button" onclick="get_face_details()" value="Get Details"/></p>
+        </div>
+    </div>
+</form>
+<script>
+  function get_face_details() {
+    var imageElement = document.querySelector('input[type="file"]')
+    var data = new FormData()
+    data.append('image_path', imageElement.files[0])
+
+    fetch('/get_face_details', {
+      method: 'POST',
+      body: data
+    }).then(
+      response => response.json()
+    ).then(
+      data => {
+        console.log(data);
+        document.getElementById('age').value = data[0].age;
+        document.getElementById('gender').value = data[0].gender;
+      }
+    ).catch(
+      error => console.log(error)
+    );
+  }
+
+  var src = document.querySelector('input[type="file"]')
+  var target = document.getElementById("image_display");
+  function showImage(src,target) {
+    var fr=new FileReader();
+    fr.onload = function(e) { target.src = this.result; };
+    src.addEventListener("change", function() {
+      fr.readAsDataURL(src.files[0]);
+    });
+  }
+  showImage(src, target);
+</script>
+{% endblock %}
